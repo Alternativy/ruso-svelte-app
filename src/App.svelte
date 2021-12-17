@@ -1,0 +1,506 @@
+<script>
+	//declarando variables
+	let inputado = "";
+	let prepositionalExceptions = ["шкаф","шкафу","сад","саду","лес","лесу","аэропорт","аэропорту","угол","уголу","полу","мост","мосту","берег","берегу"];
+	let caso = ["nominativo","genitivo","dativo","acusativo","instrumental","preposicional"];
+	let genericException = ["время","имя","папа","дедучка","кофе","мужчина","дядя"]
+	let testInput = "nada"
+	let genero = ["masculino","femenino","neutro"];
+	console.log(comprobarCilirico("null"))
+	$: filteredInput = comprobarCilirico(testInput);
+	//retorna caracteres ciliricos
+	function comprobarCilirico(input) {
+		if(input.match(/[\а-я]+/ig)==""){
+			return "Ingrese un input en ruso"
+		}else{
+			return input.match(/[\а-я]+/ig)
+		}
+	}
+	//sirve para comprobar el genero de palabras en caso genitivo singular
+	function comprobarGenero(input){
+		if(genericException.includes(input)){
+			switch(input){
+				case genericException[0]:
+				case genericException[1]:
+					return genero[2]
+				case genericException[2]:
+				case genericException[3]:
+				case genericException[4]:
+				case genericException[5]:
+				case genericException[6]:
+					return genero[0]
+			}
+		}else{
+		//comprueba si la palabra es una excepción
+		// 		for(let i = 0; i > input.lenght; i++){
+		// 			if(input==genericException[i]){
+		// 				return "es excepción"
+		// 			}
+		//}
+		let arrayInput = input.split("")
+		if(input != ""){
+		switch(arrayInput[input.length-1]){
+			case "а":
+			case "я":
+			 	return genero[1]
+			case "о":
+			case "е":
+				return genero[2] 
+			case "ь":
+				if(input.endsWith("арь")||input.endsWith("тель")){
+					return genero[0]
+				}else if (input == "голубь"||"лебедь"||"дождь"||"гвоздь"){
+					return genero[0]
+				}else if (input.endsWith("чь")||input.endsWith("шь")||input.endsWith("щь")||input.endsWith("ость")||input.endsWith("бь")||input.endsWith("вь")||input.endsWith("дь")||input.endsWith("зь")||input.endsWith("сь")||input.endsWith("ть")){
+					return genero[1]
+				}else{
+				return "este programa todavia no sabe distinguir bien el genero de las palabras terminadas en signo blando"}
+			default:
+				return genero[0]
+				}
+			}
+		}
+	}
+	//pasa un sustantivo de nominativo a cualquiera de los otros casos
+	function casos(input,caso){
+		switch (caso){
+			//pag 53 libro 2do año
+			case "genitivo":
+					case "masculino":
+						if(input.endsWith("й" || "ь")){
+							let resultadoGenitivo = input.split("");
+							resultadoGenitivo.pop();
+							resultadoGenitivo.push("я");
+							return resultadoGenitivo.join("");
+						}else{
+							return input + "а"
+						}
+					case "femenino": 
+						if(input.endsWith( "га" || "ка" ||"ша" || "жа" || "ха" || "ча" || "ь"|| "я" )){
+							let resultadoGenitivo = input.split("");
+							resultadoGenitivo.pop();
+							resultadoGenitivo.push("и");
+							return resultadoGenitivo.join("");
+						} else{
+							let resultadoGenitivo = input.split("");
+							resultadoGenitivo.pop();
+							resultadoGenitivo.push("ы");
+							return resultadoGenitivo.join("");
+						}
+					case "neutro":
+					if(input.endsWith("о")){
+						let resultadoGenitivo = input.split("");
+						resultadoGenitivo.pop();
+						resultadoGenitivo.push("а");
+						return resultadoGenitivo.join("");
+					}else{
+						let resultadoGenitivo = input.split("");
+							resultadoGenitivo.pop();
+							resultadoGenitivo.push("я");
+							return resultadoGenitivo.join("");
+					}
+			case "dativo":
+				//pag 89 del libro
+				switch (input) {
+					case "masculino":
+						if(input.endsWith("ь" || "й")){
+							let resultadoGenitivo = input.split("");
+							resultadoGenitivo.pop();
+							resultadoGenitivo.push("ю");
+							return resultadoGenitivo.join("");
+						}else{
+							let resultadoGenitivo = input.split("");
+							resultadoGenitivo.pop();
+							resultadoGenitivo.push("у");
+							return resultadoGenitivo.join("");
+						}
+					case "femenino":
+						if(input.endsWith("а"||"я")){
+							let resultadoGenitivo = input.split("");
+							resultadoGenitivo.pop();
+							resultadoGenitivo.push("е");
+							return resultadoGenitivo.join("");
+						}else {
+							let resultadoGenitivo = input.split("");
+							resultadoGenitivo.pop();
+							resultadoGenitivo.push("и");
+							return resultadoGenitivo.join("");
+						}
+				}
+				//hacer pluralizador dativo
+			case "acusativo":
+				//pag 82 del libro de primer año
+				//si es femenino, termina con у о ю. sino queda igual
+				if(comprobarGenero(input)=="femenino"){
+					let resultadoAcusativo = input.split("")
+					if(resultadoAcusativo.pop()=="я"){
+						resultadoAcusativo.push("ю")
+						return resultadoAcusativo.join("")
+					}else{
+						resultadoAcusativo.push("у")
+						return resultadoAcusativo.join("")
+					}
+				}else{
+					return input
+				}
+			case "instrumental"://pag 77 del libro de segundo año
+				switch (input) {
+					case "masculino"://comprobar la logica del caso
+						if(input.endsWith("ь"()|| "й" || "ец")){
+							let resultadoPrepositivo = input.split("")
+							resultadoPrepositivo.pop()
+							resultadoPrepositivo.push("")
+							return resultadoPrepositivo.join("")
+						}
+				}
+				return "funcion aun no disponible"
+
+			case "preposicional":
+				//pag 7 segundo año
+				if (prepositionalExceptions.includes(input)){
+					return "es excepción"
+				}else{
+					switch(comprobarGenero(input)){
+						case genero[1]://femenino
+						if(input.endsWith("ия")){
+							let resultadoPrepositivo = input.split("")
+							resultadoPrepositivo.pop()
+							resultadoPrepositivo.push("и")
+							return resultadoPrepositivo.join("")
+						}else /*if (resultadoPrepositivo.pop()=="а"||"я")*/{
+							let resultadoPrepositivo = input.split("")
+							resultadoPrepositivo.pop()
+							resultadoPrepositivo.push("е")
+							return resultadoPrepositivo.join("")
+						}
+						case genero[2]://neutro
+							if(input.endsWith("ие")){
+							let resultadoPrepositivo = input.split("")
+							resultadoPrepositivo.pop()
+							resultadoPrepositivo.push("и")
+							return resultadoPrepositivo.join("")
+							}else{ /*if (resultadoPrepositivo.pop()=="е"||"о")*/
+							let resultadoPrepositivo = input.split("")
+							resultadoPrepositivo.push("е")
+							return resultadoPrepositivo.join("")
+							}
+						case genero[0]://masculino
+							let resultadoPrepositivo = input.split("")
+							if (resultadoPrepositivo.pop()=="й"){
+								resultadoPrepositivo.push("е")
+								return resultadoPrepositivo.join("")
+							}else{
+								resultadoPrepositivo.push("е")
+								return resultadoPrepositivo.join("")
+							}	
+					}
+				}
+				//pag 7 libro de segundo año
+				
+			default://"nominativo"
+				return input
+		}
+	}
+	//plurales en pagina 51 del libro de primer año
+	function pluralizer(input){
+		switch(input){
+			case "ябоко":
+				return "ябоки"
+			case "город":
+				return "города"
+			case "дом": 
+				return "дома"
+			case "глаз":
+				return "глаза"
+			case "паспорт":
+				return "паспорта"
+			case "сестра":
+				return "сёстры"
+			case "день":
+				return "дни"
+			case "иностранец":
+				return "иностранцы"
+			case "брат":
+				return "братья"
+			case "друг":
+				return "друзья"
+			case "стул":
+				return "стулья"
+			case "дерево":
+				return "деревья"
+			case "лист":
+				return "листья"
+			case "ребёнок":
+				return "дети"
+			case "человек":
+				return "люди"
+			}
+		switch(comprobarGenero(input)){
+			// case numberException.includes(input):
+			// 	return numberException.filter(number => input==number)
+	 		//mostrar plural almacenado en el array asociativo(to do)
+		 	//	return 
+			case genero[1]:
+			//por ahora agrega "и" pero despues le agrego para que agregue "ы" cuando sea necesario 
+				let pluralized = input.split("")
+				pluralized.pop()
+				pluralized.push("и")
+				return pluralized.join("")
+			case genero[2]:
+				//checkear que el condicional sirva para mayusculas y minusculas
+				if(input[input.lenght-1]=="о"){
+					let pluralized = input.split("")
+					pluralized.pop()
+					pluralized.push("и")
+					return pluralized.join("")
+				}else if(input.endsWith("мя")){
+					let pluralized = input.split("")
+					pluralized.pop()
+					pluralized.push("ена")
+					return pluralized.join("")}
+					else{
+				let pluralized = input.split("")
+				pluralized.pop()
+				pluralized.push("я")
+				return pluralized.join("")
+				}
+			case genero[0]:
+				if(input.endsWith("й")){
+					let pluralized = input.split("")
+					pluralized.pop()
+					pluralized.push("и")
+					return pluralized.join("")
+					}else if(input[input.lenght-1] == "г" || "к" ||"ш" || "ж" || "х" || "ч" ){
+					let pluralized = input.split("")
+					pluralized.push("и")
+					return pluralized.join("")
+				} else{
+					let pluralized = input.split("")
+					pluralized.push("ы")
+					return pluralized.join("")
+				}
+			default:
+				return `este programa aun tiene errores con las termimaciones en "ь"`
+		}
+	}
+	function pluralizadorPreposicional(input) {
+		if (pluralizer(input).endsWith("ы")){
+			let pluralPreposicional = pluralizer(input);
+			pluralPreposicional = pluralPreposicional.split("");
+			pluralPreposicional.pop();
+			pluralPreposicional.push("ах");
+			return pluralPreposicional.join("");
+		}else{
+			let pluralPreposicional = pluralizer(input)
+			pluralPreposicional = pluralPreposicional.split("")
+			pluralPreposicional.pop()
+			pluralPreposicional.push("ях")
+			return pluralPreposicional.join("")
+		}
+	}
+	function forTesting(input,functionName,functionToTest,expectedResult) {
+		if(functionToTest!=expectedResult){console.error("Test failed")}
+		return `For the input: ${input} to the function ${functionName} the output is: ${functionToTest}, and the expected output was: ${expectedResult}`
+	}
+</script>
+
+
+<main>
+	<div class="testing">
+		<p>{forTesting("имя","comprobarGenero",comprobarGenero("имя"),"neutro")}</p>
+		<p>{forTesting("дедучка","comprobarGenero",comprobarGenero("дедучка"),"masculino")}</p>
+		<p>{forTesting("книга","comprobarGenero",comprobarGenero("книга"),"femenino")}</p>
+		<p>{forTesting("музей","comprobarGenero",comprobarGenero("музей"),"masculino")}</p>
+		<p>{forTesting("музей","pluralizer",pluralizer("музей"),"музеи")}</p>
+		<p>{forTesting("дом","pluralizer",pluralizer("дом"),"дома")}</p>
+		<p>{forTesting("книга","casos",casos("книга","acusativo"),"книгу")}</p>
+		<p>{forTesting("книга","casos",casos("книга","acusativo"),"книгу")}</p>
+		<!-- <p>{forTesting()}</p> -->
+		<p>{comprobarCilirico("input")}</p>
+		<p>{comprobarCilirico("статья")}</p>
+		<p>{comprobarCilirico("статьяinput ")}</p>
+		<p>comprobar genero para excepción <b>{comprobarGenero("имя")}</b> expected output = <b>neutro</b></p>
+		<p>casos para acusativo <b>{casos("книга","acusativo")}</b> expected output = <b>книгу</b> </p>
+		<p>casos para acusativo <b>{casos("статья","acusativo")}</b> expected output = <b>статью</b> </p>
+		<p>casos para acusativo <b>{casos("музей","acusativo")}</b> expected output = <b>музей</b> </p>
+		<p>pluralizer para masculino <b>{pluralizer("диалог")}</b> expected output = <b>диалоги</b> </p>
+		<p>comprobar numero para excepción en pluralizer <b>{pluralizer("дом")}</b> expected output = <b>дома</b></p>
+		<p>comprobar pluralizador <b>{pluralizer("имя")}</b> expected output = <b>имена</b></p>
+		<p>casos para preposicional <b>{casos("статья","preposicional")}</b> expected output = <b>статье</b></p>
+		<p>casos para preposicional <b>{casos("музей","preposicional")}</b> expected output = <b>музее</b></p>
+		<p>casos para preposicional plural <b>{pluralizadorPreposicional("музей")}</b> expected output = <b>музеях</b></p> 
+		<p>casos para genitivo <b>{casos("музей","genitivo")}</b> expected output = <b>музея</b> </p>
+		<p><input bind:value={testInput} type="text" name="testtext" id="164"></p>
+		<p>{filteredInput}</p>
+	</div>
+	<h2>¿De que genero es la palabra en ruso?</h2>
+		<p>Para saber el genero de una palabra en ruso debes de tener en cuenta la terminación de la palabra</p>
+			<table>
+				<tr>
+					<th>Masculino</th>
+					<th>Femenino</th>
+					<th>neutro</th>
+				</tr>
+				<tr>
+					<td>consonante<br>й<br>ь</td>
+					<td>а<br>я<br>ь</td>
+					<td>о<br>е</td>
+				</tr>
+			</table>
+		<p>Eso si, las palabras que terminan en "ь" pueden ser tanto femeninas como masculinas, así que ahi no queda otra que memorizarlo y/o googlearlo ¿Es mucho quilombo? no te preocupes que aqui tengo un programa que te lo averiguará al instante</p>
+	<input type="text" bind:value={inputado} placeholder="poné un sustantivo en nominativo singular">
+
+	<p>el genero de la palabra es: <b>{comprobarGenero(inputado) || 'poné un sustantivo en nominativo singular'}!</b></p>
+		<h2>Pasar sustantivos de singular a plural en ruso</h2>
+			<p>Para convertir sustantivos en plural, se debe de seguir las reglas que estan en este cuadro</p> 
+				<!-- <table>
+					<th></th>
+					<th></th>
+					<th></th>
+				</table> -->
+				
+			<p>¿Es mucho quilombo? no te preocupes que aqui tengo un programa que te lo convertira al instante</p>
+	<input bind:value={inputado} placeholder="poné un sustantivo en nominativo singular">
+	<p>en plural sería <b>{pluralizer(inputado) || 'poné un sustantivo en nominativo'}!</b></p>
+<h2>Pasar un sustantivo a caso Acusativo</h2>
+	<p>Lo que hay que tener en cuenta a la hora de usar el caso acusativo, es que este solo cambiará si este esta en femenino.</p>
+	<p>cuadro no disponible</p>
+	<p>¿Es mucho quilombo? no te preocupes que aqui tengo un programa que te lo convertira al instante</p>
+	<input bind:value={inputado} placeholder="poné un sustantivo en nominativo">
+	<p>en caso acusativo la palabra es: <b>{casos(inputado,"acusativo") || 'poné un sustantivo en nominativo'}!</b></p>	
+		<!-- <h1>
+		el genero de la palabra es {comprobarGenero("книга")}<br>
+		en acusativo la palabra es {casos("книга","acusativo")}
+	</h1> -->
+	<div class="container">
+		<details>
+			<summary>
+			<!-- Empezar un dialogo -->
+				<h1>Начтите диалог</h1>
+			</summary>
+		<ol>
+			<li>
+			<!-- Usted quiere ir al teatro. Pregunte que espectaculo podemos ver hoy. Cuanto cuesta la entrada-->
+				<h2>Вы хотите пойти в театр. <b>Спросите</b>, какой спектакль сегодня можно посмотреть. Сколько стоит билет.</h2>
+				<input type="text">
+			</li>
+			<li>
+			<!-- Usted fué al medico. Cuentelé, que es lo que le duele -->
+				<h2>Вы пришли к врачу. Скажите, как Вы себя чувствуете.</h2>
+				<input type="text">
+			</li>
+			<li>
+			<!-- Usted quiere ir a el parque a pasear. Invitá a tus amigos -->
+				<h2>Вы хотите поехать в парк погулять. Пригласите друзей.</h2>
+				<input type="text">
+			</li>
+			<li>
+				<h2>Вы познакомились с известной актрисой. Что вы у неё спросите?</h2>
+				<input type="text">
+			</li>
+			<li>
+				<h2>В ресторане. Что Вы хотите на обед, скажите, что вам принести</h2>
+				<input type="text">
+			</li>
+		</ol>
+		</details>
+		<details>
+		<summary>
+			<h1>Отвечайте на вопросы</h1>
+		</summary>
+		<ol>
+		<li>
+		<!-- Donde naciste -->
+			<h2>Где Вы родились?</h2>
+			<input type="text">
+		</li>
+		<li>
+		<!-- Cuantos años tenés -->
+			<h2>Сколько вам лет?</h2>
+			<input type="text">
+		</li>
+		<li>
+		<!-- Donde estudiaste -->
+			<h2>Где Вы учились?</h2>
+			<input type="text">
+		</li>
+		<li>
+		<!-- Donde vas a menudo -->
+			<h2>Куда Вы часто ходите? </h2>
+			<input type="text">
+		</li>
+		<li>
+		<!-- Que mes te fuiste de vacaciones y en que fuiste-->
+			<h2>Куда и в каком месяце Вы ездили в отпуск? На чём Вы ездили?</h2>
+			<input type="text">
+		</li>
+		<li>
+		<!-- Comprás suvenires a menudo? Que suvenir te comprarias en Rusia -->
+			<h2>Вы часто покупаете сувениры? Какие сувениры вы можете купить в России?</h2>
+			<input type="text">
+		</li>
+		<li>
+		<!-- Que amas hacer en tu tiempo libre -->
+			<h2>Что Вы любите делать в свободное время?</h2>
+			<input type="text">
+		</li>
+		<li>
+		<!-- Que comes y tomas para el desayuno -->
+			<h2>Что Вы едите и пьёте на завтрак?</h2>
+			<input type="text">
+		</li>
+		<li>
+		<!-- Que es lo que te apasiona -->
+			<h2>Чем Вы интересуетесь?</h2>
+			<input type="text">
+		</li>
+		<li>
+		<!-- Por que estudiás el idioma ruso -->
+			<h2>Почему Вы изучаете Русский Язык?</h2>
+			<input type="text">
+		</li>
+		</ol>
+		</details>
+		<details>
+		<summary>
+			<!-- Habla sobre un tema: "como descanse en verano" -->
+			<h1>Подготовьте сообщение на тему: «Как я отдыхал/а летом».</h1>
+		</summary>
+		<input type="text">
+		</details>
+	</div>
+</main>
+
+<style>
+	h1,summary{
+		margin: 1%;
+		padding: 0;
+		display: inline-block;
+		text-align: center;
+		width: 97%;
+		background-color: rgb(255, 183, 88);
+		/* border-radius: 25%; */
+	}
+	details{
+		margin: 0;
+		padding: 0;
+		background-color: rgb(134, 134, 175);
+	}
+	h2{
+		font-size: 20px;
+	}
+	main{
+		background-color: rgb(255, 192, 192);
+		padding: 2%;
+	}
+	input{
+		width: 90vw;
+	}
+	table,td,th{
+		border: 1px rgb(39, 25, 25) solid;
+		border-collapse: collapse;
+		margin: 2px;
+		padding: 2px;
+		text-align: center;
+	}
+</style>
