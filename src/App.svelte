@@ -1,9 +1,25 @@
 <script>
-	//import axios from 'axios';
+	//let axios = require("axios").default;
+	// import axios from 'axios';
+	let traslated = "";
+	let respuesta = "";
+	async function traslate(input){
+		let res = await fetch("https://translate.api.skitzen.com/translate", {
+	method: "POST",
+	body: JSON.stringify({
+		q: input,
+		source: "ru",
+		target: "es",
+		format: "text"
+	}), 
+		headers: { "Content-Type": "application/json" }
+	});
+	traslated = await res.json();
+	}
 	//import { onMount } from 'svelte';
-	let traslated = {};
+	// let traslated = [];
 	// function traslate(input) {
-	// 	axios.get(`https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=dict.1.1.20211230T152121Z.6a45119dfb602ee4.80d88f01b6f8ce8280a0f65e940d72c14d00da47&lang=ru-es&text=${input}`)
+	// 	axios.get(`https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=dict.1.1.20211230T152121Z.6a45119dfb602ee4.80d88f01b6f8ce8280a0f65e940d72c14d00da47&lang=es-ru&text=${input}`)
 	// 	.then(res => {
 	// 		traslated = res.data;
 	// 		console.log(traslated);
@@ -340,7 +356,6 @@
 	}
 </script>
 
-
 <main>
 	<!-- <div class="testing">
 		<p>{forTesting("имя","comprobarGenero",comprobarGenero("имя"),"neutro")}</p>
@@ -407,13 +422,17 @@
 	<p>en caso preposicional la palabra es: <b>{casos(inputado.toLowerCase(),"preposicional") || ''}</b></p>	
 	<p>en caso genitivo la palabra es: <b>{casos(inputado.toLowerCase(),"genitivo") || ''}</b></p>	
 	<p>en caso acusativo la palabra es: <b>{casos(inputado.toLowerCase(),"acusativo") || ''}</b></p>	
-	<!-- <p>La palabra en español significa: <button on:click={traslate(inputado)}>traducir</button>(Powered by <a href="https://tech.yandex.com/dictionary">Yandex.Dictionary)</a></p> -->
+	<p>La palabra en español significa:
+		{#if traslated != ""}
+			<p>{traslated}</p>
+		{/if}
+		<button on:click={traslate(inputado)}>traducir</button></p>
 	<footer>esta app aun esta en beta, por lo que puede haber cosas erroneas</footer>
 		<!--<h1>
 		el genero de la palabra es {comprobarGenero("книга")}<br>
 		en acusativo la palabra es {casos("книга","acusativo")}
 	</h1> -->
-<Preguntas />
+<!-- <Preguntas /> -->
 </main>
 
 <style>
@@ -443,6 +462,7 @@
 		background-color: rgba(255, 238, 0, 0.6);
 		backdrop-filter: blur(6px);
 		padding: 2%;
+		box-shadow: solid 0px 0px 12px;
 	}
 	input{
 		width: 90vw;
