@@ -1,5 +1,5 @@
 <script>
-	import { Instrumental } from "Instrumental.js";
+	const { Instrumental } = require("Instrumental.js");
 	//let axios = require("axios").default;
 	// import axios from 'axios';
 	let traslated = "";
