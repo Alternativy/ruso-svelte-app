@@ -1,4 +1,5 @@
 <script>
+	import { Instrumental } from "Instrumental.js";
 	//let axios = require("axios").default;
 	// import axios from 'axios';
 	let traslated = "";
@@ -194,18 +195,20 @@
 				}else{
 					return input
 				}
-			case "instrumental"://pag 77 del libro de segundo año
-				switch (input) {
-					case "masculino"://comprobar la logica del caso
-						if(input.endsWith("ь"()|| "й" || "ец")){
-							let resultadoPrepositivo = input.split("")
-							resultadoPrepositivo.pop()
-							resultadoPrepositivo.push("")
-							return resultadoPrepositivo.join("")
-						}
-				}
-				return "funcion aun no disponible"
-
+			case "instrumental":
+				nominativeToInstrumental(input)
+			//pag 77 del libro de segundo año
+				// switch (input) {
+				// 	case "masculino"://comprobar la logica del caso
+				// 		if(input.endsWith("ь"()|| "й" || "ец")){
+				// 			let resultadoPrepositivo = input.split("")
+				// 			resultadoPrepositivo.pop()
+				// 			resultadoPrepositivo.push("")
+				// 			return resultadoPrepositivo.join("")
+				// 		}
+				// }
+				// return "funcion aun no disponible"
+				
 			case "preposicional":
 				//pag 7 segundo año
 				if (prepositionalExceptions.includes(input)){
