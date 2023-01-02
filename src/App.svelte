@@ -1,5 +1,5 @@
 <script>
-	const { Instrumental } = require("Instrumental.js");
+	import { nominativeToInstrumental } from "./Instrumental";
 	//let axios = require("axios").default;
 	// import axios from 'axios';
 	let traslated = "";
@@ -39,7 +39,7 @@
 	let testInput = "nada"
 	let genero = ["masculino","femenino","neutro"];
 	$: filteredInput = filtrarCilirico(testInput);
-	//retorna caracteres ciliricos
+	//retorna si tiene caracteres ciliricos
 	function comprobarCilirico(input){
 		if(input.match(/[\Ёёа-я]+/ig)==null){
 			return false
@@ -196,19 +196,50 @@
 					return input
 				}
 			case "instrumental":
-				nominativeToInstrumental(input)
 			//pag 77 del libro de segundo año
-				// switch (input) {
-				// 	case "masculino"://comprobar la logica del caso
-				// 		if(input.endsWith("ь"()|| "й" || "ец")){
-				// 			let resultadoPrepositivo = input.split("")
-				// 			resultadoPrepositivo.pop()
-				// 			resultadoPrepositivo.push("")
-				// 			return resultadoPrepositivo.join("")
-				// 		}
-				// }
-				// return "funcion aun no disponible"
-				
+			switch (input) {
+					case "masculino":
+						if(input.endsWith("ь"|| "й")){
+							let resultadoPrepositivo = input.split("")
+							resultadoPrepositivo.pop()
+							resultadoPrepositivo.push("ем")
+							return resultadoPrepositivo.join("")
+						}else if(input.endsWith("ец")){
+                            let resultadoPrepositivo = input.split("")
+							resultadoPrepositivo.pop()
+							resultadoPrepositivo.pop()
+							resultadoPrepositivo.push("ем")
+							return resultadoPrepositivo.join("")
+                        }//Masculine nouns ending in a consonant take "-ом" in the instrumental case. 
+                            //For example: "брат" (brother) becomes "братом" (with a brother).
+                        return input + "ом";
+                    case "femenino":
+                        if (input.endsWith("ь")){
+                            let resultadoPrepositivo = input.split("")
+							resultadoPrepositivo.pop()
+							resultadoPrepositivo.push("ю")
+							return resultadoPrepositivo.join("")
+                        } else if(input.endsWith("я")){
+                            let resultadoPrepositivo = input.split("")
+							resultadoPrepositivo.pop()
+							resultadoPrepositivo.push("ей")
+							return resultadoPrepositivo.join("")
+                        } else if(input.endsWith("щ"||"ц"||"ш"||"ж"||"ч")){
+                            let resultadoPrepositivo = input.split("")
+							resultadoPrepositivo.pop()
+							resultadoPrepositivo.push("ей")
+							return resultadoPrepositivo.join("")
+                        }   else {
+							let resultadoPrepositivo = input.split("")
+							resultadoPrepositivo.pop()
+							resultadoPrepositivo.push("ой")
+							return resultadoPrepositivo.join("")
+					}
+                    case "neutro":
+                        let resultadoPrepositivo = input.split("")
+                        resultadoPrepositivo.push("м")
+                        return resultadoPrepositivo.join("");
+                        }			
 			case "preposicional":
 				//pag 7 segundo año
 				if (prepositionalExceptions.includes(input)){
@@ -357,6 +388,7 @@
 		if(functionToTest!=expectedResult){console.error("Test failed")}
 		return `For the input: ${input} to the function ${functionName} the output is: ${functionToTest}, and the expected output was: ${expectedResult}`
 	}
+	console.assert(casos("слово","instrumental") == "словом", "Falló el test de слово , en caso instrumental")
 </script>
 
 <main>
