@@ -1,7 +1,5 @@
 <script>
 	import { nominativeToInstrumental } from "./Instrumental";
-	//let axios = require("axios").default;
-	// import axios from 'axios';
 	let traslated = "";
 	let respuesta = "";
 	async function traslate(input){
@@ -17,20 +15,6 @@
 	});
 	traslated = await res.json();
 	}
-	//import { onMount } from 'svelte';
-	// let traslated = [];
-	// function traslate(input) {
-	// 	axios.get(`https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=dict.1.1.20211230T152121Z.6a45119dfb602ee4.80d88f01b6f8ce8280a0f65e940d72c14d00da47&lang=es-ru&text=${input}`)
-	// 	.then(res => {
-	// 		traslated = res.data;
-	// 		console.log(traslated);
-	// 	})
-	// 	.catch(err => {
-    //     console.log(err, err.response)
-    // })
-	// }
-	//onMount(traslate("окно"))
-	import Preguntas from "./Preguntas.svelte";
 	//declarando variables
 	let inputado = "";
 	let prepositionalExceptions = ["шкаф","шкафу","сад","саду","лес","лесу","аэропорт","аэропорту","угол","уголу","полу","мост","мосту","берег","берегу"];
@@ -69,12 +53,6 @@
 					return genero[0]
 			}
 		}else{
-		//comprueba si la palabra es una excepción
-		// 		for(let i = 0; i > input.lenght; i++){
-		// 			if(input==genericException[i]){
-		// 				return "es excepción"
-		// 			}
-		//}
 		let arrayInput = input.split("")
 		if(input != ""){
 		switch(arrayInput[input.length-1]){
@@ -196,8 +174,8 @@
 					return input
 				}
 			case "instrumental":
-			//pag 77 del libro de segundo año
-			switch (input) {
+				//pag 77 del libro de segundo año
+				switch (input) {
 					case "masculino":
 						if(input.endsWith("ь"|| "й")){
 							let resultadoPrepositivo = input.split("")
@@ -334,10 +312,10 @@
 				return pluralized.join("")
 			case genero[2]:
 				//checkear que el condicional sirva para mayusculas y minusculas
-				if(input[input.lenght-1]=="о"){
+				if(input.endsWith("о")){
 					let pluralized = input.split("")
 					pluralized.pop()
-					pluralized.push("и")
+					pluralized.push("а")
 					return pluralized.join("")
 				}else if(input.endsWith("мя")){
 					let pluralized = input.split("")
@@ -452,11 +430,11 @@
 	<p>¿Es mucho quilombo? no te preocupes que aqui tengo un programa que te lo convertira al instante</p>
 	-->
 	<!-- <input bind:value={inputado} placeholder="poné un sustantivo en nominativo"> -->
-	<p>en caso instrumental la palabra es: <b>{casos(inputado.toLowerCase(),"instrumental") || ''}</b></p>	
-	<p>en caso dativo la palabra es: <b>{casos(inputado.toLowerCase(),"dativo") || ''}</b></p>	
-	<p>en caso preposicional la palabra es: <b>{casos(inputado.toLowerCase(),"preposicional") || ''}</b></p>	
 	<p>en caso genitivo la palabra es: <b>{casos(inputado.toLowerCase(),"genitivo") || ''}</b></p>	
+	<p>en caso dativo la palabra es: <b>{casos(inputado.toLowerCase(),"dativo") || ''}</b></p>	
 	<p>en caso acusativo la palabra es: <b>{casos(inputado.toLowerCase(),"acusativo") || ''}</b></p>	
+	<p>en caso instrumental la palabra es: <b>{casos(inputado.toLowerCase(),"instrumental") || ''}</b></p>	
+	<p>en caso preposicional la palabra es: <b>{casos(inputado.toLowerCase(),"preposicional") || ''}</b></p>	
 	<p>La palabra en español significa:
 		{#if traslated != ""}
 			<p>{traslated}</p>
@@ -476,23 +454,23 @@
 		color: rgb(200,0,0);
 		font-weight: bold;
 	}
-	h1,summary{
+	/* h1,summary{
 		margin: 1%;
 		padding: 0;
 		display: inline-block;
 		text-align: center;
 		width: 97%;
 		background-color: rgb(255, 183, 88);
+	} */
 		/* border-radius: 25%; */
-	}
-	details{
+	/* details{
 		margin: 0;
 		padding: 0;
 		background-color: rgb(134, 134, 175);
-	}
-	h2{
+	} */
+	/* h2{
 		font-size: 20px;
-	}
+	} */
 	main{
 		background-color: rgba(255, 238, 0, 0.6);
 		backdrop-filter: blur(6px);
@@ -502,13 +480,13 @@
 	input{
 		width: 90vw;
 	}
-	table,td,th{
+	/* table,td,th{
 		border: 1px rgb(39, 25, 25) solid;
 		border-collapse: collapse;
 		margin: 2px;
 		padding: 2px;
 		text-align: center;
-	}
+	} */
 	footer{
 		text-align: center;
 	}
