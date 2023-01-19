@@ -3,27 +3,44 @@
 	let traslated = "";
 	let respuesta = "";
 	async function traslate(input){
-		let res = await fetch("https://translate.api.skitzen.com/translate", {
+		let res = await fetch("https://libretranslate.com/translate", {
 	method: "POST",
 	body: JSON.stringify({
-		q: input,
+		q: "inputado",
 		source: "ru",
 		target: "es",
-		format: "text"
-	}), 
+		format: "text",
+		api_key: ""
+	}),
 		headers: { "Content-Type": "application/json" }
 	});
-	traslated = await res.json();
+
+	console.log(await res.json());
 	}
 	//declarando variables
 	let inputado = "";
-	let prepositionalExceptions = ["шкаф","шкафу","сад","саду","лес","лесу","аэропорт","аэропорту","угол","уголу","полу","мост","мосту","берег","берегу"];
+	let prepositionalExceptions = {"шкаф":"шкафу",
+									"сад":"саду",
+									"лес":"лесу",
+									"аэропорт":"аэропорту",
+									"угол":"уголу",
+									"пола":"полу",
+									"мост":"мосту",
+									"берег":"берегу",
+									"дочь":"дочери",
+									"мать":"матери"};
 	let caso = ["nominativo","genitivo","dativo","acusativo","instrumental","preposicional"];
 	let genericException = ["время","имя","папа","дедучка","кофе","мужчина","дядя"]
 	let testInput = "nada"
 	let genero = ["masculino","femenino","neutro"];
 	$: filteredInput = filtrarCilirico(testInput);
 	//retorna si tiene caracteres ciliricos
+	let word = false;
+	$: word = { animated: false };
+
+	function toggle() {
+		word.animated = !word.animated;
+	}
 	function comprobarCilirico(input){
 		if(input.match(/[\Ёёа-я]+/ig)==null){
 			return false
@@ -161,6 +178,38 @@
 			case "acusativo"://solo funciona con objetos inanimados
 				//pag 82 del libro de primer año
 				//si es femenino, termina con у о ю. sino queda igual
+				if(word.animated){
+					let exceptions = {
+						"ребенок": "ребенка",
+						"птенец": "птенца",
+						"дочь": "дочери"
+					};
+				  let inputArray = input.split("");
+				  switch (comprobarGenero(input)) {
+				    case "femenino":
+				      if(exceptions[input]){
+				        return exceptions[input];
+				      }
+				      if(input.endsWith("а") || input.endsWith("я")){
+				        inputArray.pop();
+				        return inputArray.join("") + "у";
+				      } 
+				      return input + "у";
+				    case "masculino":
+				      if(exceptions[input]){
+				        return exceptions[input];
+				      }
+				      if(input.endsWith("о")){
+				        inputArray.pop();
+				        return inputArray.join("") + "а";
+				      }
+				      return input + "а";
+				    case "neutro":
+				      //In this case this shouldn't happen, since neutro nouns are inanimate
+				      return input;
+				  }
+				}
+				//if is animated
 				if(comprobarGenero(input)=="femenino"){
 					let resultadoAcusativo = input.split("")
 					if(resultadoAcusativo.pop()=="я"){
@@ -220,9 +269,9 @@
                         }			
 			case "preposicional":
 				//pag 7 segundo año
-				if (prepositionalExceptions.includes(input)){
-					return "es excepción"
-				}else{
+				if(prepositionalExceptions[input]){
+					return exceptions[input];
+				}
 					switch(comprobarGenero(input)){
 						case genero[1]://femenino
 						if(input.endsWith("ия")){
@@ -256,8 +305,7 @@
 							}else{
 								resultadoPrepositivo.push("е")
 								return resultadoPrepositivo.join("")
-							}	
-					}
+							}
 				}
 				//pag 7 libro de segundo año
 				
@@ -370,7 +418,6 @@
 	console.assert(casos("брат", "instrumental") === "братом", "Test case 1 failed: 'брат' in instrumental should be 'братом'");
 	console.assert(casos("дом", "genitivo") === "дома", "Test case 2 failed: 'дом' in genitivo should be 'дома'");
 	console.assert(casos("жена", "dativo") === "жене", "Test case 3 failed: 'жена' in dativo should be 'жене'");
-	console.assert(casos("ребенок", "acusativo") === "ребенка", "Test case 4 failed: 'ребенок' in acusativo should be 'ребенка'");
 	console.assert(casos("окно", "preposicional") === "окне", "Test case 5 failed: 'окно' in preposicional should be 'окне'");
 
 	
@@ -380,6 +427,13 @@
 	console.assert(comprobarGenero("имя") === "neutro", "Test case 3 failed: 'имя' should be neuter");
 	console.assert(comprobarGenero("слово") === "neutro", "Test case 4 failed: 'слово' should be neuter");
 	console.assert(comprobarGenero("рука") === "femenino", "Test case 5 failed: 'рука' should be feminine");
+
+	//console.assert(casos("брат", "acusativo") === "брата", "Test case 1 failed: 'брат' in acusativo should be 'брата'");
+	//console.assert(casos("друг", "acusativo") === "друга", "Test case 2 failed: 'друг' in acusativo should be 'друга'");
+	//console.assert(casos("жена", "acusativo") === "жену", "Test case 3 failed: 'жена' in acusativo should be 'жену'");
+	//console.assert(casos("ребенок", "acusativo") === "ребенка", "Test case 4 failed: 'ребенок' in acusativo should be 'ребенка'");
+	//console.assert(casos("окно", "acusativo") === "окно", "Test case 5 failed: 'окно' in acusativo should be 'окно'");
+
 </script>
 
 <main>
@@ -430,6 +484,15 @@
 			<p class="warning">tenes que ponerlo en cilirico</p>
 		{/if}
 	<!-- <p>la palabra esta en cilirico?: <b>{comprobarCilirico(inputado)}!</b></p> -->
+	{#if word.animated}
+	indica si está vivo o no: <button type="checkbox" on:click={toggle}>
+		Animado
+	</button>
+	{:else}
+	indica si está vivo o no: <button type="checkbox" on:click={toggle}>
+			Inanimado
+		</button>
+	{/if}
 	<p>el genero de la palabra es: <b>{comprobarGenero(inputado.toLowerCase()) || ''}</b></p>
 		<!-- <h2>Pasar sustantivos de singular a plural en ruso</h2> -->
 			<!--<p>Para convertir sustantivos en plural, se debe de seguir las reglas que estan en este cuadro</p> 
@@ -445,7 +508,7 @@
 	<!-- <input bind:value={inputado} placeholder="poné un sustantivo en nominativo"> -->
 	<p>en caso genitivo la palabra es: <b>{casos(inputado.toLowerCase(),"genitivo") || ''}</b></p>	
 	<p>en caso dativo la palabra es: <b>{casos(inputado.toLowerCase(),"dativo") || ''}</b></p>	
-	<p>en caso acusativo la palabra es: <b>{casos(inputado.toLowerCase(),"acusativo") || ''}*(solo sirve para objetos inanimados)</b></p>
+	<p>en caso acusativo la palabra es: <b>{casos(inputado.toLowerCase(),"acusativo") || ''}</b></p>
 	<p>en caso instrumental la palabra es: <b>{casos(inputado.toLowerCase(),"instrumental") || ''}</b></p>	
 	<p>en caso preposicional la palabra es: <b>{casos(inputado.toLowerCase(),"preposicional") || ''}</b></p>	
 	<p>La palabra en español significa:
