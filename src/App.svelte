@@ -119,7 +119,7 @@
 				}
 			case "dativo":
 				//pag 89 del libro
-				switch (input) {
+				switch (comprobarGenero(input)) {
 					case "masculino":
 						if(input.endsWith("ь" || "й")){
 							let resultadoGenitivo = input.split("");
@@ -145,12 +145,12 @@
 							return resultadoGenitivo.join("");
 						}
 					case "neutro":
-						if(input.endsWith(o)){
+						if(input.endsWith("o")){
 							let resultadoGenitivo = input.split("");
 							resultadoGenitivo.pop();
 							resultadoGenitivo.push("у");
 							return resultadoGenitivo.join("");
-						} else if (input.endsWith(e)){
+						} else if (input.endsWith("e")){
 							let resultadoGenitivo = input.split("");
 							resultadoGenitivo.pop();
 							resultadoGenitivo.push("ю");
@@ -158,7 +158,7 @@
 						}
 				}
 				//hacer pluralizador dativo
-			case "acusativo":
+			case "acusativo"://solo funciona con objetos inanimados
 				//pag 82 del libro de primer año
 				//si es femenino, termina con у о ю. sino queda igual
 				if(comprobarGenero(input)=="femenino"){
@@ -175,7 +175,7 @@
 				}
 			case "instrumental":
 				//pag 77 del libro de segundo año
-				switch (input) {
+				switch (comprobarGenero(input)) {
 					case "masculino":
 						if(input.endsWith("ь"|| "й")){
 							let resultadoPrepositivo = input.split("")
@@ -367,6 +367,19 @@
 		return `For the input: ${input} to the function ${functionName} the output is: ${functionToTest}, and the expected output was: ${expectedResult}`
 	}
 	console.assert(casos("слово","instrumental") == "словом", "Falló el test de слово , en caso instrumental")
+	console.assert(casos("брат", "instrumental") === "братом", "Test case 1 failed: 'брат' in instrumental should be 'братом'");
+	console.assert(casos("дом", "genitivo") === "дома", "Test case 2 failed: 'дом' in genitivo should be 'дома'");
+	console.assert(casos("жена", "dativo") === "жене", "Test case 3 failed: 'жена' in dativo should be 'жене'");
+	console.assert(casos("ребенок", "acusativo") === "ребенка", "Test case 4 failed: 'ребенок' in acusativo should be 'ребенка'");
+	console.assert(casos("окно", "preposicional") === "окне", "Test case 5 failed: 'окно' in preposicional should be 'окне'");
+
+	
+	//Test exceptions for gender
+	console.assert(comprobarGenero("голубь") === "masculino", "Test case 1 failed: 'голубь' should be masculine");
+	console.assert(comprobarGenero("время") === "neutro", "Test case 2 failed: 'время' should be neuter");
+	console.assert(comprobarGenero("имя") === "neutro", "Test case 3 failed: 'имя' should be neuter");
+	console.assert(comprobarGenero("слово") === "neutro", "Test case 4 failed: 'слово' should be neuter");
+	console.assert(comprobarGenero("рука") === "femenino", "Test case 5 failed: 'рука' should be feminine");
 </script>
 
 <main>
@@ -432,7 +445,7 @@
 	<!-- <input bind:value={inputado} placeholder="poné un sustantivo en nominativo"> -->
 	<p>en caso genitivo la palabra es: <b>{casos(inputado.toLowerCase(),"genitivo") || ''}</b></p>	
 	<p>en caso dativo la palabra es: <b>{casos(inputado.toLowerCase(),"dativo") || ''}</b></p>	
-	<p>en caso acusativo la palabra es: <b>{casos(inputado.toLowerCase(),"acusativo") || ''}</b></p>	
+	<p>en caso acusativo la palabra es: <b>{casos(inputado.toLowerCase(),"acusativo") || ''}*(solo sirve para objetos inanimados)</b></p>
 	<p>en caso instrumental la palabra es: <b>{casos(inputado.toLowerCase(),"instrumental") || ''}</b></p>	
 	<p>en caso preposicional la palabra es: <b>{casos(inputado.toLowerCase(),"preposicional") || ''}</b></p>	
 	<p>La palabra en español significa:
