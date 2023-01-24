@@ -22,7 +22,7 @@
 	//declarando variables
 	let inputado = "";
 	function sendToBackend() {
-    axios.post("/submit", {string: inputado})
+    axios.post("/submit", {string: "шкаф"})
     .then(response => {
         console.log(response.data);
     })
