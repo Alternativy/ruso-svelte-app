@@ -20,9 +20,11 @@ export function nominativeToInstrumental(input) {
     const neuters = ["е", "о", "ё"];
   
     // Check if the input ends in any of the endings for masculine nouns
-    if (masculines.some(ending => input.endsWith(ending))) {
-      // If it does, remove the ending and add "ом"
-      return input.slice(0, -1) + "ом";
+    if(comprobarGenero(input)=="masculino"){
+       if (masculines.some(ending => input.endsWith(ending))) {
+        // If it does, remove the ending and add "ом"
+        return input.slice(0, -1) + "ом";
+      }
     }
     // Check if the input ends in any of the endings for feminine nouns
     else if (feminines.some(ending => input.endsWith(ending))) {

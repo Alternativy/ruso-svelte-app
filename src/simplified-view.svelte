@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 function comprobarGenero(input){
 //retorna "masculino","femenino" o "neutro"
 //}
@@ -59,4 +59,4 @@ function casos(input,caso){
                 return input
 }
 }
-</script>
+</script> -->

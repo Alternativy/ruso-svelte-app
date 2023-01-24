@@ -1,24 +1,35 @@
 <script>
 	import { nominativeToInstrumental } from "./Instrumental";
+	import { axios } from "axios"
 	let traslated = "";
 	let respuesta = "";
-	async function traslate(input){
-		let res = await fetch("https://libretranslate.com/translate", {
-	method: "POST",
-	body: JSON.stringify({
-		q: "inputado",
-		source: "ru",
-		target: "es",
-		format: "text",
-		api_key: ""
-	}),
-		headers: { "Content-Type": "application/json" }
-	});
+	// const { translate } = require('bing-translate-api');
+	// async function traslate(input){
+	// 	let res = await fetch("https://libretranslate.com/translate", {
+	// method: "POST",
+	// body: JSON.stringify({
+	// 	q: "inputado",
+	// 	source: "ru",
+	// 	target: "es",
+	// 	format: "text",
+	// 	api_key: ""
+	// }),
+	// 	headers: { "Content-Type": "application/json" }
+	// });
 
-	console.log(await res.json());
-	}
+	// console.log(await res.json());
+	// }
 	//declarando variables
 	let inputado = "";
+	function sendToBackend() {
+    axios.post("/submit", {string: inputado})
+    .then(response => {
+        console.log(response.data);
+    })
+    .catch(error => {
+        console.log(error);
+    });
+}
 	let prepositionalExceptions = {"шкаф":"шкафу",
 									"сад":"саду",
 									"лес":"лесу",
@@ -515,7 +526,7 @@
 		{#if traslated != ""}
 			<p>{traslated}</p>
 		{/if}
-		<button on:click={traslate(inputado)}>traducir</button></p>
+		<button on:click={sendToBackend}>traducir</button></p>
 	<footer>esta app aun esta en beta, por lo que puede haber cosas erroneas</footer>
 		<!--<h1>
 		el genero de la palabra es {comprobarGenero("книга")}<br>
